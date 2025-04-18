@@ -1,7 +1,6 @@
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import React, { forwardRef, useImperativeHandle, useRef } from "react";
-import user from "../assets/images/user.jpg";
+import  {  useRef } from "react";
 import logo from "../assets/images/logo.jpg";
 import "./style.css";
 

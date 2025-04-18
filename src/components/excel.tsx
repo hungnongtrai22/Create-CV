@@ -1,6 +1,5 @@
-import React, { useState, ChangeEvent } from 'react';
+import  {  ChangeEvent } from 'react';
 import * as XLSX from 'xlsx';
-import { PDFDocument, rgb } from 'pdf-lib';
 
 interface ExcelRow extends Array<string | number | boolean | null | undefined> {}
 interface ExcelProps {

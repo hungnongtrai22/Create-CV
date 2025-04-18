@@ -1,10 +1,8 @@
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import React, { forwardRef, useImperativeHandle, useRef } from "react";
+import  { forwardRef, useImperativeHandle, useRef } from "react";
 import user from "../assets/images/user.jpg"
 import logo from "../assets/images/logo.jpg"
-import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
 
 interface ExcelRow extends Array<string | number | boolean | null | undefined> {}
 interface ExcelProps {
