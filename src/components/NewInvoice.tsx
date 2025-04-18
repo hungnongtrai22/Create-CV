@@ -93,7 +93,7 @@ const NewInvoice = ({ cv }: InvoiceProps) => {
       if (position < heightAfter) pdf.addPage();
     }
 
-    pdf.save(cv.name?.toString());
+    pdf.save(`${cv.userId < 10 ? "0" + cv.userId : cv.userId}-${cv.name?.toString()}`);
   };
 
   const jsDate = new Date();
@@ -124,7 +124,7 @@ const NewInvoice = ({ cv }: InvoiceProps) => {
             <div>
               {/* <h3 className="text-lg font-semibold mb-4">Bill To:</h3> */}
               <p className="text-gray-700">
-                面接番号: {cv.userId}
+                面接番号: {cv.userId < 10 ? "0" + cv.userId : cv.userId}
                 <br />
                 {customFormat}
                 {/* <br />
