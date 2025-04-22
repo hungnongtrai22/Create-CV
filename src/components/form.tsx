@@ -1,15 +1,84 @@
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { registerLocale } from "react-datepicker";
+import { ja } from "date-fns/locale/ja";
+import "./form.css";
+registerLocale("ja", ja);
+
 type CreateCVProps = {
   user: any;
+  errors: any;
   handleChange: any;
   onSubmit: any;
+  onChangeSchoolTime: any;
+  onAddSchool: any;
+  handleFocus: any;
+  onAddCompany: any;
+  onChangeCompanyTime: any;
+  onChangeFamilyTime: any;
+  onAddFamily: any;
 };
 
-const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
+const CreateCV = ({
+  user,
+  handleChange,
+  onSubmit,
+  onChangeSchoolTime,
+  onAddSchool,
+  errors,
+  handleFocus,
+  onAddCompany,
+  onChangeCompanyTime,
+  onChangeFamilyTime,
+  onAddFamily,
+}: CreateCVProps) => {
+  
+  const handleChangeTime = (
+    dates: [Date | null, Date | null] | null,
+    index: any
+  ) => {
+    if (!dates) return;
+
+    const [newStartDate, newEndDate] = dates;
+    // console.log("Start " + index + ": " + newStartDate);
+
+    if (newStartDate instanceof Date && !isNaN(newStartDate.getTime())) {
+      // console.log("Start " + index + ": " + newStartDate);
+      onChangeSchoolTime(index, "timeFrom", newStartDate);
+    }
+
+    if (newEndDate instanceof Date && !isNaN(newEndDate.getTime())) {
+      // console.log("End " + index + ": " + newEndDate);
+      onChangeSchoolTime(index, "timeTo", newEndDate);
+    }
+  };
+
+  const handleChangeCompanyTime = (
+    dates: [Date | null, Date | null] | null,
+    index: any
+  ) => {
+    if (!dates) return;
+
+    const [newStartDate, newEndDate] = dates;
+    // console.log("Start " + index + ": " + newStartDate);
+
+    if (newStartDate instanceof Date && !isNaN(newStartDate.getTime())) {
+      // console.log("Start " + index + ": " + newStartDate);
+      onChangeCompanyTime(index, "timeFrom", newStartDate);
+    }
+
+    if (newEndDate instanceof Date && !isNaN(newEndDate.getTime())) {
+      // console.log("End " + index + ": " + newEndDate);
+      onChangeCompanyTime(index, "timeTo", newEndDate);
+    }
+  };
+
   return (
     <form
       className="max-w-3xl mx-auto mt-5 border-2 border-solid p-5 shadow-xl"
       onSubmit={onSubmit}
     >
+      
       <div className="grid md:grid-cols-4 md:gap-6">
         <div className="relative z-0 w-full mb-5 group">
           <div id="date-range-picker" className="flex items-center">
@@ -25,9 +94,20 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
                 id="userId"
                 name="userId"
                 type="number"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                required
+                //className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+                  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+                  dark:focus:ring-blue-500 dark:focus:border-blue-500
+                  ${
+                    errors.userId
+                      ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                      : "border-gray-300 dark:border-gray-600"
+                  }`}
                 value={user.userId}
                 onChange={handleChange}
+                onFocus={handleFocus}
+                min={1}
               />
             </div>
           </div>
@@ -118,6 +198,7 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
                     >
                       <span>ファイルを選択</span>
                       <input
+                        required
                         id="file-upload"
                         name="file-upload"
                         type="file"
@@ -162,10 +243,18 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
             name="name"
             id="name"
             // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.name
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
             placeholder=" "
             required
             onChange={handleChange}
+            onFocus={handleFocus}
             value={user.name}
           />
         </div>
@@ -182,10 +271,19 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
             name="namejp"
             id="namejp"
             // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            // className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.namejp
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
             placeholder=" "
             required
             onChange={handleChange}
+            onFocus={handleFocus}
             value={user.nameJP}
           />
         </div>
@@ -208,11 +306,22 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
               <input
                 id="birthday"
                 name="birthday"
+                lang="ja"
                 type="date"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                // className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+                  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+                  dark:focus:ring-blue-500 dark:focus:border-blue-500
+                  ${
+                    errors.birthday
+                      ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                      : "border-gray-300 dark:border-gray-600"
+                  }`}
                 placeholder="Select date start"
                 value={user.birthday}
                 onChange={handleChange}
+                onFocus={handleFocus}
+                required
               />
             </div>
           </div>
@@ -253,8 +362,18 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
           <select
             name="sex"
             id="sex"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            // className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.sex
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
             onChange={handleChange}
+            onFocus={handleFocus}
+            required
           >
             <option value="">--選択--</option>
             <option value="男">男</option>
@@ -271,15 +390,26 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
           <select
             name="blood"
             id="blood"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            // className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.blood
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
             onChange={handleChange}
+            onFocus={handleFocus}
             value={user.blood}
+            required
           >
             <option value="">--選択--</option>
             <option value="A型">A型</option>
             <option value="B型">B型</option>
             <option value="AB型">AB型</option>
             <option value="O型">O型</option>
+            <option value="未検査">未検査</option>
           </select>
         </div>
       </div>
@@ -299,9 +429,20 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
                 id="height"
                 name="height"
                 type="number"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                // className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+                  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+                  dark:focus:ring-blue-500 dark:focus:border-blue-500
+                  ${
+                    errors.height
+                      ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                      : "border-gray-300 dark:border-gray-600"
+                  }`}
                 value={user.height}
                 onChange={handleChange}
+                onFocus={handleFocus}
+                min="1"
+                required
               />
             </div>
           </div>
@@ -320,9 +461,20 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
                 id="weight"
                 name="weight"
                 type="number"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                // className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+                  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+                  dark:focus:ring-blue-500 dark:focus:border-blue-500
+                  ${
+                    errors.weight
+                      ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                      : "border-gray-300 dark:border-gray-600"
+                  }`}
                 value={user.weight}
                 onChange={handleChange}
+                onFocus={handleFocus}
+                required
+                min="1"
               />
             </div>
           </div>
@@ -344,6 +496,7 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
                 type="number"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 value={user.BMI}
+                required
               />
             </div>
           </div>
@@ -358,9 +511,19 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
           <select
             name="blindColor"
             id="blindColor"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            // className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.blindColor
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
             onChange={handleChange}
+            onFocus={handleFocus}
             value={user.blindColor}
+            required
           >
             <option value="">--選択--</option>
             <option value="あり">あり</option>
@@ -382,9 +545,19 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
               <select
                 name="leftEye"
                 id="eyes"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                // className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+                  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+                  dark:focus:ring-blue-500 dark:focus:border-blue-500
+                  ${
+                    errors.leftEye
+                      ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                      : "border-gray-300 dark:border-gray-600"
+                  }`}
                 onChange={handleChange}
+                onFocus={handleFocus}
                 value={user.leftEye}
+                required
               >
                 <option value="">--左目--</option>
                 <option value="0">0</option>
@@ -415,9 +588,19 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
               <select
                 name="rightEye"
                 id="rightEye"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                // className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+                  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+                  dark:focus:ring-blue-500 dark:focus:border-blue-500
+                  ${
+                    errors.rightEye
+                      ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                      : "border-gray-300 dark:border-gray-600"
+                  }`}
+                onFocus={handleFocus}
                 onChange={handleChange}
                 value={user.rightEye}
+                required
               >
                 <option value="">--右目--</option>
                 <option value="0">0</option>
@@ -445,9 +628,19 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
           <select
             name="hand"
             id="hand"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            // className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.hand
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
+            onFocus={handleFocus}
             onChange={handleChange}
             value={user.hand}
+            required
           >
             <option value="">--選択--</option>
             <option value="右手">右手</option>
@@ -465,9 +658,19 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
           <select
             name="married"
             id="married"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            // className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.married
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
+            onFocus={handleFocus}
             onChange={handleChange}
             value={user.married}
+            required
           >
             <option value="">--選択--</option>
             <option value="未婚">未婚</option>
@@ -482,7 +685,7 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
           <div id="date-range-picker" className="flex items-center">
             <div className="relative w-full">
               <label
-                htmlFor="driver"
+                htmlFor="driverLicense"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
                 運転免許
@@ -490,12 +693,22 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
 
               <select
                 name="driverLicense"
-                id="driver"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                id="driverLicense"
+                //className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+                  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+                  dark:focus:ring-blue-500 dark:focus:border-blue-500
+                  ${
+                    errors.driverLicense
+                      ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                      : "border-gray-300 dark:border-gray-600"
+                  }`}
+                onFocus={handleFocus}
                 onChange={handleChange}
                 value={user.driverLicense}
+                required
               >
-                <option value="">--左目--</option>
+                <option value="">--選択--</option>
                 <option value="二輪車">二輪車</option>
                 <option value="普通自動車">普通自動車</option>
                 <option value="なし">なし</option>
@@ -516,11 +729,21 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
               <select
                 name="smoke"
                 id="smoke"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                //className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+                  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+                  dark:focus:ring-blue-500 dark:focus:border-blue-500
+                  ${
+                    errors.smoke
+                      ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                      : "border-gray-300 dark:border-gray-600"
+                  }`}
+                onFocus={handleFocus}
                 onChange={handleChange}
                 value={user.smoke}
+                required
               >
-                <option value="">--右目--</option>
+                <option value="">--選択--</option>
                 <option value="なし">なし</option>
                 <option value="あり">あり</option>
               </select>
@@ -537,9 +760,19 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
           <select
             name="alcohol"
             id="alcohol"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            //className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.alcohol
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
+            onFocus={handleFocus}
             onChange={handleChange}
             value={user.alcohol}
+            required
           >
             <option value="">--選択--</option>
             <option value="なし">なし</option>
@@ -556,7 +789,17 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
           <select
             name="tattoo"
             id="tattoo"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            //className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.tattoo
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
+            onFocus={handleFocus}
+            required
             onChange={handleChange}
             value={user.tattoo}
           >
@@ -581,7 +824,16 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
             name="address"
             id="address"
             // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            //className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.address
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
+            onFocus={handleFocus}
             placeholder=" "
             required
             onChange={handleChange}
@@ -591,1087 +843,413 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
       </div>
       <div className="border-2 border-solid p-3">
         <h3 className="mb-4 mt-2">学歴</h3>
-        <div className="grid md:grid-cols-6 md:gap-6">
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="schoolTime1"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              期間
-            </label>
-            <input
-              type="text"
-              name="schoolTime1"
-              id="schoolTime1"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.schoolTime1}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="schoolName1"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              学校名
-            </label>
-            <input
-              type="text"
-              name="schoolName1"
-              id="schoolName1"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.schoolName1}
-            />
-          </div>
-          <div className="relative z-0  w-full mb-5 group">
-            <label
-              htmlFor="schoolContent1"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              学習内容
-            </label>
-            <input
-              type="text"
-              name="schoolContent1"
-              id="schoolContent1"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.schoolContent1}
-            />
-          </div>
-          <div className="relative z-0  w-full mb-5 group">
-            <label
-              htmlFor="schoolCurrent1"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              現在
-            </label>
-            <input
-              type="text"
-              name="schoolCurrent1"
-              id="schoolCurrent1"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.schoolCurrent1}
-            />
-          </div>
-        </div>
+        {user.school.map((school: any, index: any) => {
+          return (
+            <div className="grid md:grid-cols-6 md:gap-6">
+              <div className="relative z-0 col-span-2 w-full mb-5 group">
+                <label
+                  htmlFor="schoolTime1"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  期間
+                </label>
+                <DatePicker
+                  selected={
+                    school.timeFrom instanceof Date ? school.timeFrom : null
+                  }
+                  startDate={
+                    school.timeFrom instanceof Date ? school.timeFrom : null
+                  }
+                  endDate={school.timeTo instanceof Date ? school.timeTo : null}
+                  onChange={(u) => handleChangeTime(u, index)}
+                  dateFormat="MM/yyyy"
+                  showMonthYearPicker
+                  locale="ja"
+                  selectsRange
+                  placeholderText="mm/yyyy"
+                  required
+                  popperClassName="some-custom-class"
+                  popperPlacement="top-end"
+                  popperModifiers={[
+                    {
+                      name: "myModifier",
+                      fn(state) {
+                        // Do something with the state
+                        return state;
+                      },
+                    },
+                  ]}
+                  className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white
+                    dark:focus:ring-blue-500 dark:focus:border-blue-500
+                    ${
+                      errors.school[index].error != ""
+                        ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                        : "border-gray-300 dark:border-gray-600"
+                    }`}
+                />
+                <div>
+                  <span className="text-xs text-red-500">
+                    {errors.school[index].error}
+                  </span>
+                </div>
+              </div>
 
-        <div className="grid md:grid-cols-6 md:gap-6">
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="schoolTime2"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              期間
-            </label>
-            <input
-              type="text"
-              name="schoolTime2"
-              id="schoolTime2"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.schoolTime2}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="schoolName2"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              学校名
-            </label>
-            <input
-              type="text"
-              name="schoolName2"
-              id="schoolName2"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.schoolName2}
-            />
-          </div>
-          <div className="relative z-0  w-full mb-5 group">
-            <label
-              htmlFor="schoolContent2"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              学習内容
-            </label>
-            <input
-              type="text"
-              name="schoolContent2"
-              id="schoolContent2"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.schoolContent2}
-            />
-          </div>
-          <div className="relative z-0  w-full mb-5 group">
-            <label
-              htmlFor="schoolCurrent2"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              現在
-            </label>
-            <input
-              type="text"
-              name="schoolCurrent2"
-              id="schoolCurrent2"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.schoolCurrent2}
-            />
-          </div>
-        </div>
-        <div className="grid md:grid-cols-6 md:gap-6">
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="schoolTime3"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              期間
-            </label>
-            <input
-              type="text"
-              name="schoolTime3"
-              id="schoolTime3"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.schoolTime3}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="schoolName3"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              学校名
-            </label>
-            <input
-              type="text"
-              name="schoolName3"
-              id="schoolName3"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.schoolName3}
-            />
-          </div>
-          <div className="relative z-0  w-full mb-5 group">
-            <label
-              htmlFor="schoolContent3"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              学習内容
-            </label>
-            <input
-              type="text"
-              name="schoolContent3"
-              id="schoolContent3"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.schoolContent3}
-            />
-          </div>
-          <div className="relative z-0  w-full mb-5 group">
-            <label
-              htmlFor="schoolCurrent3"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              現在
-            </label>
-            <input
-              type="text"
-              name="schoolCurrent3"
-              id="schoolCurrent3"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.schoolCurrent3}
-            />
-          </div>
-        </div>
-
-        <div className="grid md:grid-cols-6 md:gap-6">
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="schoolTime4"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              期間
-            </label>
-            <input
-              type="text"
-              name="schoolTime4"
-              id="schoolTime4"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.schoolTime4}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="schoolName3"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              学校名
-            </label>
-            <input
-              type="text"
-              name="schoolName4"
-              id="schoolName4"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.schoolName4}
-            />
-          </div>
-          <div className="relative z-0  w-full mb-5 group">
-            <label
-              htmlFor="schoolContent4"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              学習内容
-            </label>
-            <input
-              type="text"
-              name="schoolContent4"
-              id="schoolContent4"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.schoolContent4}
-            />
-          </div>
-          <div className="relative z-0  w-full mb-5 group">
-            <label
-              htmlFor="schoolCurrent4"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              現在
-            </label>
-            <input
-              type="text"
-              name="schoolCurrent4"
-              id="schoolCurrent4"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.schoolCurrent4}
-            />
-          </div>
+              <div className="relative z-0 col-span-2 w-full mb-5 group">
+                <label
+                  htmlFor={`schoolName${index}`}
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  学校名
+                </label>
+                <input
+                  type="text"
+                  name={`schoolName${index}`}
+                  id={`schoolName${index}`}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder=" "
+                  onChange={(e) =>
+                    onChangeSchoolTime(index, "name", e.target.value)
+                  }
+                  value={school.name}
+                  required
+                />
+              </div>
+              <div className="relative z-0  w-full mb-5 group">
+                <label
+                  htmlFor={`schoolContent${index}`}
+                  // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  学習内容
+                </label>
+                <select
+                  name={`schoolContent${index}`}
+                  id={`schoolContent${index}`}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  onChange={(e) =>
+                    onChangeSchoolTime(index, "content", e.target.value)
+                  }
+                  value={school.school}
+                  required
+                >
+                  <option value="">--選択--</option>
+                  <option value="小学校">小学校</option>
+                  <option value="中学校">中学校</option>
+                  <option value="高校">高校</option>
+                  <option value="短期大学">短期大学</option>
+                  <option value="専門学校">専門学校</option>
+                  <option value="大学">大学</option>
+                </select>
+              </div>
+              <div className="relative z-0  w-full mb-5 group">
+                <label
+                  htmlFor={`schoolCurrent${index}`}
+                  // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  現在
+                </label>
+                <input
+                  type="text"
+                  name={`schoolCurrent${index}`}
+                  id={`schoolCurrent${index}`}
+                  // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder=" "
+                  onChange={(e: any) =>
+                    onChangeSchoolTime(index, "current", e.target.value)
+                  }
+                  value={school.current}
+                  required
+                />
+              </div>
+            </div>
+          );
+        })}
+        <div className="flex flex-row-reverse">
+          <button
+            type="button"
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            onClick={onAddSchool}
+          >
+            学歴を追加する
+          </button>
         </div>
       </div>
       <div className="border-2 border-solid p-3 mt-5 mb-5">
         <h3 className="mb-4 mt-2">職歴</h3>
-
-        <div className="grid md:grid-cols-6 md:gap-6">
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="companyTime1"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              期間
-            </label>
-            <input
-              type="text"
-              name="companyTime1"
-              id="companyTime1"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.companyTime1}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="companyName1"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              会社（職場）
-            </label>
-            <input
-              type="text"
-              name="companyName1"
-              id="companyName1"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.companyName1}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="companyContent1"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              仕事の内容
-            </label>
-            <input
-              type="text"
-              name="companyContent1"
-              id="companyContent1"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.companyContent1}
-            />
-          </div>
-        </div>
-        <div className="grid md:grid-cols-6 md:gap-6">
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="companyTime2"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              期間
-            </label>
-            <input
-              type="text"
-              name="companyTime2"
-              id="companyTime2"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.companyTime2}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="companyName2"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              会社（職場）
-            </label>
-            <input
-              type="text"
-              name="companyName2"
-              id="companyName2"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.companyName2}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="companyContent2"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              仕事の内容
-            </label>
-            <input
-              type="text"
-              name="companyContent2"
-              id="companyContent2"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.companyContent2}
-            />
-          </div>
-        </div>
-        <div className="grid md:grid-cols-6 md:gap-6">
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="companyTime3"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              期間
-            </label>
-            <input
-              type="text"
-              name="companyTime3"
-              id="companyTime3"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.companyTime3}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="companyName3"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              会社（職場）
-            </label>
-            <input
-              type="text"
-              name="companyName3"
-              id="companyName3"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.companyName3}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="companyContent3"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              仕事の内容
-            </label>
-            <input
-              type="text"
-              name="companyContent3"
-              id="companyContent3"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.companyContent3}
-            />
-          </div>
+        {user.company.map((company: any, index: any) => {
+          return (
+            <div className="grid md:grid-cols-6 md:gap-6">
+              <div className="relative z-0 col-span-2 w-full mb-5 group">
+                <label
+                  htmlFor="companyTime1"
+                  // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  期間
+                </label>
+                <DatePicker
+                  selected={
+                    company.timeFrom instanceof Date ? company.timeFrom : null
+                  }
+                  startDate={
+                    company.timeFrom instanceof Date ? company.timeFrom : null
+                  }
+                  endDate={
+                    company.timeTo instanceof Date ? company.timeTo : null
+                  }
+                  onChange={(u) => handleChangeCompanyTime(u, index)}
+                  dateFormat="MM/yyyy"
+                  showMonthYearPicker
+                  locale="ja"
+                  selectsRange
+                  placeholderText="mm/yyyy"
+                  required
+                  popperPlacement="top-start" // hoặc 'top'
+                  className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white
+                    dark:focus:ring-blue-500 dark:focus:border-blue-500
+                    ${
+                      errors.company[index].error != ""
+                        ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                        : "border-gray-300 dark:border-gray-600"
+                    }`}
+                />
+                <div>
+                  <span className="text-xs text-red-500">
+                    {errors.company[index].error}
+                  </span>
+                </div>
+              </div>
+              <div className="relative z-0 col-span-2 w-full mb-5 group">
+                <label
+                  htmlFor={`companyName${index}`}
+                  // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  会社（職場）
+                </label>
+                <input
+                  type="text"
+                  name={`companyName${index}`}
+                  id={`companyName${index}`}
+                  // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder=" "
+                  onChange={(e) =>
+                    onChangeCompanyTime(index, "name", e.target.value)
+                  }
+                  value={company.name}
+                  required
+                />
+              </div>
+              <div className="relative z-0 col-span-2 w-full mb-5 group">
+                <label
+                  htmlFor={`companyContent${index}`}
+                  // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  仕事の内容
+                </label>
+                <input
+                  type="text"
+                  name={`companyContent${index}`}
+                  id={`companyContent${index}`}
+                  // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder=" "
+                  // onChange={handleChange}
+                  onChange={(e) =>
+                    onChangeCompanyTime(index, "content", e.target.value)
+                  }
+                  value={company.content}
+                  required
+                />
+              </div>
+            </div>
+          );
+        })}
+        <div className="flex flex-row-reverse">
+          <button
+            type="button"
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            onClick={onAddCompany}
+          >
+            職務経歴を追加
+          </button>
         </div>
       </div>
 
       <div className="border-2 border-solid p-3 mt-5 mb-5">
         <h3 className="mb-4 mt-2">家族構成</h3>
-
-        <div className="grid md:grid-cols-9 md:gap-6">
-          <div className="relative z-0 w-full mb-5 group">
-            <label
-              htmlFor="relationship1"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              関係
-            </label>
-            <input
-              type="text"
-              name="relationship1"
-              id="relationship1"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.relationship1}
-            />
-          </div>
-          <div className="relative z-0 col-span-3 w-full mb-5 group">
-            <label
-              htmlFor="name1"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              氏名
-            </label>
-            <input
-              type="text"
-              name="name1"
-              id="name1"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.name1}
-            />
-          </div>
-          <div className="relative z-0  w-full mb-5 group">
-            <label
-              htmlFor="year1"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              生年
-            </label>
-            <input
-              type="text"
-              name="year1"
-              id="year1"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.year1}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="location1"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              会社名（場所）
-            </label>
-            <input
-              type="text"
-              name="location1"
-              id="location1"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.location1}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="occupation1"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              職業
-            </label>
-            <input
-              type="text"
-              name="occupation1"
-              id="occupation1"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.occupation1}
-            />
-          </div>
-        </div>
-        <div className="grid md:grid-cols-9 md:gap-6">
-          <div className="relative z-0 w-full mb-5 group">
-            <label
-              htmlFor="relationship2"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              関係
-            </label>
-            <input
-              type="text"
-              name="relationship2"
-              id="relationship2"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.relationship2}
-            />
-          </div>
-          <div className="relative z-0 col-span-3 w-full mb-5 group">
-            <label
-              htmlFor="name2"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              氏名
-            </label>
-            <input
-              type="text"
-              name="name2"
-              id="name2"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.name2}
-            />
-          </div>
-          <div className="relative z-0  w-full mb-5 group">
-            <label
-              htmlFor="year2"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              生年
-            </label>
-            <input
-              type="text"
-              name="year2"
-              id="year2"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.year2}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="location2"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              会社名（場所）
-            </label>
-            <input
-              type="text"
-              name="location2"
-              id="location2"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.location2}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="occupation2"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              職業
-            </label>
-            <input
-              type="text"
-              name="occupation2"
-              id="occupation2"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.occupation2}
-            />
-          </div>
-        </div>
-        <div className="grid md:grid-cols-9 md:gap-6">
-          <div className="relative z-0 w-full mb-5 group">
-            <label
-              htmlFor="relationship3"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              関係
-            </label>
-            <input
-              type="text"
-              name="relationship3"
-              id="relationship3"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.relationship3}
-            />
-          </div>
-          <div className="relative z-0 col-span-3 w-full mb-5 group">
-            <label
-              htmlFor="name3"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              氏名
-            </label>
-            <input
-              type="text"
-              name="name3"
-              id="name3"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.name3}
-            />
-          </div>
-          <div className="relative z-0  w-full mb-5 group">
-            <label
-              htmlFor="year3"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              生年
-            </label>
-            <input
-              type="text"
-              name="year3"
-              id="year3"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.year3}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="location3"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              会社名（場所）
-            </label>
-            <input
-              type="text"
-              name="location3"
-              id="location3"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.location3}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="occupation3"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              職業
-            </label>
-            <input
-              type="text"
-              name="occupation3"
-              id="occupation3"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.occupation3}
-            />
-          </div>
-        </div>
-        <div className="grid md:grid-cols-9 md:gap-6">
-          <div className="relative z-0 w-full mb-5 group">
-            <label
-              htmlFor="relationship4"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              関係
-            </label>
-            <input
-              type="text"
-              name="relationship4"
-              id="relationship4"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.relationship4}
-            />
-          </div>
-          <div className="relative z-0 col-span-3 w-full mb-5 group">
-            <label
-              htmlFor="name4"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              氏名
-            </label>
-            <input
-              type="text"
-              name="name4"
-              id="name4"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.name4}
-            />
-          </div>
-          <div className="relative z-0  w-full mb-5 group">
-            <label
-              htmlFor="year4"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              生年
-            </label>
-            <input
-              type="text"
-              name="year4"
-              id="year4"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.year4}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="location4"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              会社名（場所）
-            </label>
-            <input
-              type="text"
-              name="location4"
-              id="location4"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.location4}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="occupation4"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              職業
-            </label>
-            <input
-              type="text"
-              name="occupation4"
-              id="occupation4"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.occupation4}
-            />
-          </div>
-        </div>
-        <div className="grid md:grid-cols-9 md:gap-6">
-          <div className="relative z-0 w-full mb-5 group">
-            <label
-              htmlFor="relationship5"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              関係
-            </label>
-            <input
-              type="text"
-              name="relationship5"
-              id="relationship5"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.relationship5}
-            />
-          </div>
-          <div className="relative z-0 col-span-3 w-full mb-5 group">
-            <label
-              htmlFor="name5"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              氏名
-            </label>
-            <input
-              type="text"
-              name="name5"
-              id="name5"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.name5}
-            />
-          </div>
-          <div className="relative z-0  w-full mb-5 group">
-            <label
-              htmlFor="year5"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              生年
-            </label>
-            <input
-              type="text"
-              name="year5"
-              id="year5"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.year5}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="location5"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              会社名（場所）
-            </label>
-            <input
-              type="text"
-              name="location5"
-              id="location5"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.location5}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="occupation5"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              職業
-            </label>
-            <input
-              type="text"
-              name="occupation5"
-              id="occupation5"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.occupation5}
-            />
-          </div>
-        </div>
-        <div className="grid md:grid-cols-9 md:gap-6">
-          <div className="relative z-0 w-full mb-5 group">
-            <label
-              htmlFor="relationship6"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              関係
-            </label>
-            <input
-              type="text"
-              name="relationship6"
-              id="relationship6"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.relationship6}
-            />
-          </div>
-          <div className="relative z-0 col-span-3 w-full mb-5 group">
-            <label
-              htmlFor="name6"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              氏名
-            </label>
-            <input
-              type="text"
-              name="name6"
-              id="name6"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.name6}
-            />
-          </div>
-          <div className="relative z-0  w-full mb-5 group">
-            <label
-              htmlFor="year6"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              生年
-            </label>
-            <input
-              type="text"
-              name="year6"
-              id="year6"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.year6}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="location6"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              会社名（場所）
-            </label>
-            <input
-              type="text"
-              name="location6"
-              id="location6"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.location6}
-            />
-          </div>
-          <div className="relative z-0 col-span-2 w-full mb-5 group">
-            <label
-              htmlFor="occupation6"
-              // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              職業
-            </label>
-            <input
-              type="text"
-              name="occupation6"
-              id="occupation6"
-              // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder=" "
-              onChange={handleChange}
-              value={user.occupation6}
-            />
-          </div>
+        {user.family.map((family: any, index: any) => {
+          return (
+            <div className="grid md:grid-cols-9 md:gap-6" key={index}>
+              <div className="relative z-0 w-full mb-5 group">
+                <label
+                  htmlFor={`relationship${index}`}
+                  // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  関係
+                </label>
+                {/* <input
+                  type="text"
+                  name={`relationship${index}`}
+                  id={`relationship${index}`}
+                  // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder=" "
+                  onChange={(e) =>
+                    onChangeFamilyTime(index, "relationship", e.target.value)
+                  }
+                  required
+                  value={family.relationship}
+                /> */}
+                <select
+                  name={`relationship${index}`}
+                  id={`relationship${index}`}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  onChange={(e) =>
+                    onChangeFamilyTime(index, "relationship", e.target.value)
+                  }
+                  value={family.relationship}
+                  required
+                >
+                  <option value="">--</option>
+                  <option value="父">父</option>
+                  <option value="母">母</option>
+                  <option value="兄">兄</option>
+                  <option value="姉">姉</option>
+                  <option value="弟">弟</option>
+                  <option value="妹">妹</option>
+                  <option value="妻">妻</option>
+                  <option value="夫">夫</option>
+                  <option value="息子">息子</option>
+                  <option value="娘">娘</option>
+                </select>
+              </div>
+              <div className="relative z-0 col-span-3 w-full mb-5 group">
+                <label
+                  htmlFor={`name${index}`}
+                  // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  氏名
+                </label>
+                <input
+                  type="text"
+                  name={`name${index}`}
+                  id={`name${index}`}
+                  // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder=" "
+                  onChange={(e) =>
+                    onChangeFamilyTime(index, "name", e.target.value)
+                  }
+                  required
+                  value={family.name}
+                />
+              </div>
+              <div className="relative z-0  w-full mb-5 group">
+                <label
+                  htmlFor={`year${index}`}
+                  // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  生年
+                </label>
+                {/* <input
+                  type="text"
+                  name={`year${index}`}
+                  id={`year${index}`}
+                  // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder=" "
+                  onChange={(e) =>
+                    onChangeFamilyTime(index, "year", e.target.value)
+                  }
+                  required
+                  value={family.year}
+                /> */}
+                <DatePicker
+                  selected={family.year}
+                  onChange={(date) => onChangeFamilyTime(index, "year", date)}
+                  showYearPicker
+                  required
+                  dateFormat="yyyy"
+                  value={family.year}
+                  popperClassName="some-custom-class"
+                  popperPlacement="top-end"
+                  // popperModifiers={[
+                  //   {
+                  //     name: "myModifier",
+                  //     fn(state) {
+                  //       // Do something with the state
+                  //       return state;
+                  //     },
+                  //   },
+                  // ]}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                />
+              </div>
+              <div className="relative z-0 col-span-2 w-full mb-5 group">
+                <label
+                  htmlFor={`location${index}`}
+                  // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  会社名（場所）
+                </label>
+                <input
+                  type="text"
+                  name={`location${index}`}
+                  id={`location${index}`}
+                  // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder=" "
+                  onChange={(e) =>
+                    onChangeFamilyTime(index, "location", e.target.value)
+                  }
+                  required
+                  value={family.location}
+                />
+              </div>
+              <div className="relative z-0 col-span-2 w-full mb-5 group">
+                <label
+                  htmlFor={`occupation${index}`}
+                  // className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  職業
+                </label>
+                <input
+                  type="text"
+                  name={`occupation${index}`}
+                  id={`occupation${index}`}
+                  // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder=" "
+                  onChange={(e) =>
+                    onChangeFamilyTime(index, "occupation", e.target.value)
+                  }
+                  required
+                  value={family.occupation}
+                />
+              </div>
+            </div>
+          );
+        })}
+        <div className="flex flex-row-reverse">
+          <button
+            type="button"
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            onClick={onAddFamily}
+          >
+            家族を追加
+          </button>
         </div>
       </div>
 
@@ -1689,7 +1267,17 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
             name="interest"
             id="interest"
             // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            //className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.interest
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
+            onFocus={handleFocus}
+            required
             placeholder=" "
             onChange={handleChange}
             value={user.interest}
@@ -1708,7 +1296,17 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
             name="foreignLanguage"
             id="foreignLanguage"
             // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            //className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.foreignLanguage
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
+            onFocus={handleFocus}
+            required
             placeholder=" "
             onChange={handleChange}
             value={user.foreignLanguage}
@@ -1730,7 +1328,17 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
             name="strong"
             id="strong"
             // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            //className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.strong
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
+            onFocus={handleFocus}
+            required
             placeholder=" "
             onChange={handleChange}
             value={user.strong}
@@ -1749,7 +1357,17 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
             name="weak"
             id="weak"
             // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            //className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.weak
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
+            onFocus={handleFocus}
+            required
             placeholder=" "
             onChange={handleChange}
             value={user.weak}
@@ -1771,7 +1389,17 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
             name="aim"
             id="aim"
             // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            //className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.aim
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
+            onFocus={handleFocus}
+            required
             placeholder=" "
             onChange={handleChange}
             value={user.aim}
@@ -1790,7 +1418,17 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
             name="plan"
             id="plan"
             // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            //className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.plan
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
+            onFocus={handleFocus}
+            required
             placeholder=" "
             onChange={handleChange}
             value={user.plan}
@@ -1812,7 +1450,17 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
             name="money"
             id="money"
             // className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            //className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.money
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
+            onFocus={handleFocus}
+            required
             placeholder=" "
             onChange={handleChange}
             value={user.money}
@@ -1829,7 +1477,17 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
           <select
             name="familyInJapan"
             id="familyInJapan"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            //className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.familyInJapan
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
+            onFocus={handleFocus}
+            required
             onChange={handleChange}
             value={user.familyInJapan}
           >
@@ -1849,7 +1507,17 @@ const CreateCV = ({ user, handleChange, onSubmit }: CreateCVProps) => {
           <select
             name="moveForeign"
             id="moveForeign"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            //className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500
+              ${
+                errors.moveForeign
+                  ? "border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }`}
+            onFocus={handleFocus}
+            required
             onChange={handleChange}
             value={user.moveForeign}
           >
