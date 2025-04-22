@@ -2,7 +2,6 @@ import { useState } from "react";
 
 import CreateCV from "./components/form";
 import NewInvoice from "./components/NewInvoice";
-import { error } from "console";
 
 function convertVietnameseToJapaneseKatakana(vietnameseName: string): string {
   // Bảng chuyển đổi phụ âm đầu
@@ -261,11 +260,11 @@ type FamilyEntry = {
   occupation: string;
 };
 
-type User = {
-  // các field khác...
-  school: SchoolEntry[];
-  company: CompanyEntry[];
-};
+// type User = {
+//   // các field khác...
+//   school: SchoolEntry[];
+//   company: CompanyEntry[];
+// };
 
 const init = {
   userId: 0,
