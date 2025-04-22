@@ -17,6 +17,9 @@ type CreateCVProps = {
   onChangeCompanyTime: any;
   onChangeFamilyTime: any;
   onAddFamily: any;
+  onRemoveSchool: any;
+  onRemoveCompany: any;
+  onRemoveFamily: any;
 };
 
 const CreateCV = ({
@@ -31,6 +34,9 @@ const CreateCV = ({
   onChangeCompanyTime,
   onChangeFamilyTime,
   onAddFamily,
+  onRemoveSchool,
+  onRemoveCompany,
+  onRemoveFamily,
 }: CreateCVProps) => {
   
   const handleChangeTime = (
@@ -975,6 +981,13 @@ const CreateCV = ({
           >
             学歴を追加する
           </button>
+          <button
+            type="button"
+            className="mx-2 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+            onClick={onRemoveSchool}
+          >
+            学歴を追加する
+          </button>
         </div>
       </div>
       <div className="border-2 border-solid p-3 mt-5 mb-5">
@@ -1078,6 +1091,13 @@ const CreateCV = ({
             onClick={onAddCompany}
           >
             職務経歴を追加
+          </button>
+          <button
+            type="button"
+            className="mx-2 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+            onClick={onRemoveCompany}
+          >
+            職務経歴を削除する
           </button>
         </div>
       </div>
@@ -1249,6 +1269,13 @@ const CreateCV = ({
             onClick={onAddFamily}
           >
             家族を追加
+          </button>
+          <button
+            type="button"
+            className="mx-2 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+            onClick={onRemoveFamily}
+          >
+            家族を削除する
           </button>
         </div>
       </div>

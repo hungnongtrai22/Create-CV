@@ -728,6 +728,51 @@ function App() {
     });
   };
 
+  const removeSchool = () => {
+   
+    setUser((prev) => {
+      const updatedSchool = [...prev.school];
+      updatedSchool.pop();
+      return { ...prev, school: updatedSchool };
+    });
+   
+    setErrors((prev) => {
+      const updatedSchool = [...prev.school];
+      updatedSchool.pop();
+      return { ...prev, school: updatedSchool };
+    });
+  };
+
+  const removeCompany = () => {
+   
+    setUser((prev) => {
+      const updatedCompany = [...prev.company];
+      updatedCompany.pop();
+      return { ...prev, company: updatedCompany };
+    });
+   
+    setErrors((prev) => {
+      const updatedCompany = [...prev.company];
+      updatedCompany.pop();
+      return { ...prev, company: updatedCompany };
+    });
+  };
+
+  const removeFamily = () => {
+   
+    setUser((prev) => {
+      const updatedFamily = [...prev.family];
+      updatedFamily.pop();
+      return { ...prev, family: updatedFamily };
+    });
+   
+    // setErrors((prev) => {
+    //   const updatedFamily = [...prev.family];
+    //   updatedSchool.pop();
+    //   return { ...prev, school: updatedSchool };
+    // });
+  };
+
   const addCompany = () => {
     const newCompany = {
       timeFrom: "",
@@ -805,6 +850,9 @@ function App() {
         onAddSchool={addSchool}
         onAddCompany={addCompany}
         onAddFamily={addFamily}
+        onRemoveSchool={removeSchool}
+        onRemoveCompany={removeCompany}
+        onRemoveFamily={removeFamily}
       />
       {isShowCV && <NewInvoice cv={user} />}
       {showModal && (
