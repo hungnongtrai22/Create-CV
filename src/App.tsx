@@ -229,9 +229,9 @@ function calculateCountYear(startDate: any, endDate: any): number {
   let year = endDate.getFullYear() - startDate.getFullYear();
   // console.log("YEAR", year)
 
-  if (startDate.getMonth() > endDate.getMonth()) {
-    year--;
-  }
+  // if (startDate.getMonth() > endDate.getMonth()) {
+  //   year--;
+  // }
   console.log("YEAR", year);
 
   return year;
